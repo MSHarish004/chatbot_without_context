@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ChatBot UI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #444;
+        }
+        #chatbox {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            height: 350px;
+            padding: 15px;
+            overflow-y: auto;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        #chatbox b {
+            color: #0078d7;
+        }
+        #message {
+            width: calc(100% - 110px);
+            padding: 10px 12px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        #message:focus {
+            outline: none;
+            border-color: #0078d7;
+            box-shadow: 0 0 5px #0078d7;
+        }
+        button {
+            width: 90px;
+            background-color: #0078d7;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 0;
+            margin-left: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+    </style>
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById("message").value;
+            if (!message.trim()) return;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({message: message})
+            });
+            const data = await response.text();
+            const chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += "<div><b>You:</b> " + message + "</div>";
+            chatbox.innerHTML += "<div><b>Grok:</b> " + data + "</div>";
+            document.getElementById("message").value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</head>
+<body>
+<h2>ChatBot UI with OpenRouter API</h2>
+<div id="chatbox" aria-live="polite" role="log"></div>
+<div style="display: flex; align-items: center;">
+    <input id="message" type="text" placeholder="Type your message here" autocomplete="off" />
+    <button onclick="sendMessage()">Send</button>
+</div>
+</body>
+</html>
+
